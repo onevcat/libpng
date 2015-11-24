@@ -765,6 +765,8 @@ typedef png_unknown_chunk * * png_unknown_chunkpp;
 #define PNG_INFO_sCAL 0x4000   /* ESR, 1.0.6 */
 #if INT_MAX >= 0x8000 /* else this might break */
 #define PNG_INFO_IDAT 0x8000   /* ESR, 1.0.6 */
+#endif
+
 #ifdef PNG_APNG_SUPPORTED
 #define PNG_INFO_acTL 0x10000
 #define PNG_INFO_fcTL 0x20000
