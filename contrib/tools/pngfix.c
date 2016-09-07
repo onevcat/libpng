@@ -1,8 +1,8 @@
 /* pngfix.c
  *
- * Copyright (c) 2014-2015 John Cunningham Bowler
+ * Copyright (c) 2014-2016 John Cunningham Bowler
  *
- * Last changed in libpng 1.6.18 [July 23, 2015]
+ * Last changed in libpng 1.6.21 [January 15, 2016]
  *
  * This code is released under the libpng license.
  * For conditions of distribution and use, see the disclaimer
@@ -319,13 +319,13 @@ uarb_mult32(uarb acc, int a_digits, uarb num, int n_digits, png_uint_32 val)
       a_digits = uarb_mult_digit(acc, a_digits, num, n_digits,
          (png_uint_16)(val & 0xffff));
 
-      /* Because n_digits and val are >0 the following must be true: */
-      assert(a_digits > 0);
-
       val >>= 16;
       if (val > 0)
          a_digits = uarb_mult_digit(acc+1, a_digits-1, num, n_digits,
             (png_uint_16)val) + 1;
+
+      /* Because n_digits and val are >0 the following must be true: */
+      assert(a_digits > 0);
    }
 
    return a_digits;
@@ -2221,7 +2221,7 @@ zlib_init(struct zlib *zlib, struct IDAT *idat, struct chunk *chunk,
    /* These values are sticky across reset (in addition to the stuff in the
     * first block, which is actually constant.)
     */
-   zlib->file_bits = 16;
+   zlib->file_bits = 24;
    zlib->ok_bits = 16; /* unset */
    zlib->cksum = 0; /* set when a checksum error is detected */
 
@@ -2304,10 +2304,12 @@ zlib_advance(struct zlib *zlib, png_uint_32 nbytes)
                zlib->file_bits = file_bits;
 
                /* Check against the existing value - it may not need to be
-                * changed.
+                * changed.  Note that a bogus file_bits is allowed through once,
+                * to see if it works, but the window_bits value is set to 15,
+                * the maximum.
                 */
                if (new_bits == 0) /* no change */
-                  zlib->window_bits = file_bits;
+                  zlib->window_bits = ((file_bits > 15) ? 15 : file_bits);
 
                else if (new_bits != file_bits) /* rewrite required */
                   bIn = (png_byte)((bIn & 0xf) + ((new_bits-8) << 4));
@@ -2328,8 +2330,7 @@ zlib_advance(struct zlib *zlib, png_uint_32 nbytes)
                if (bIn != b2)
                {
                   /* If the first byte wasn't changed this indicates an error in
-                   * the checksum calculation; signal this by setting file_bits
-                   * (not window_bits) to 0.
+                   * the checksum calculation; signal this by setting 'cksum'.
                    */
                   if (zlib->file_bits == zlib->window_bits)
                      zlib->cksum = 1;
