@@ -1,4 +1,4 @@
-;Version 1.6.25
+;Version 1.6.33
 ;--------------------------------------------------------------
 ; LIBPNG symbol list as a Win32 DEF file
 ; Contains all the symbols that can be exported from libpng
@@ -270,3 +270,8 @@ EXPORTS
  png_write_frame_head @263
  png_write_frame_tail @264
  png_image_write_to_memory @265
+ png_image_write_to_memory @266
+ png_get_eXIf @267
+ png_set_eXIf @268
+ png_get_eXIf_1 @269
+ png_set_eXIf_1 @270
