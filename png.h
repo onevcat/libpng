@@ -1005,12 +1005,6 @@ PNG_EXPORT(7, void, png_set_compression_buffer_size, (png_structrp png_ptr,
 PNG_EXPORT(8, jmp_buf*, png_set_longjmp_fn, (png_structrp png_ptr,
     png_longjmp_ptr longjmp_fn, size_t jmp_buf_size));
     
-#  define png_jmpbuf(png_ptr) \
-      (*png_set_longjmp_fn((png_ptr), longjmp, (sizeof (jmp_buf))))
-#else
-#  define png_jmpbuf(png_ptr) \
-      (LIBPNG_WAS_COMPILED_WITH__PNG_NO_SETJMP)
-#endif
 /* This function should be used by libpng applications in place of
  * longjmp(png_ptr->jmpbuf, val).  If longjmp_fn() has been set, it
  * will use it; otherwise it will call PNG_ABORT().  This function was
@@ -1018,6 +1012,10 @@ PNG_EXPORT(8, jmp_buf*, png_set_longjmp_fn, (png_structrp png_ptr,
  */
 PNG_EXPORTA(9, void, png_longjmp, (png_const_structrp png_ptr, int val),
     PNG_NORETURN);
+
+int* png_jmpbuf(png_structp png_ptr);
+
+#endif
 
 #ifdef PNG_READ_SUPPORTED
 /* Reset the compression stream */

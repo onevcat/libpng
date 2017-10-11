@@ -36,13 +36,8 @@
 /* zlib.h has mediocre z_const use before 1.2.6, this stuff is for compatibility
  * with older builds.
  */
-#if ZLIB_VERNUM < 0x1260
 #  define PNGZ_MSG_CAST(s) png_constcast(char*,s)
 #  define PNGZ_INPUT_CAST(b) png_constcast(png_bytep,b)
-#else
-#  define PNGZ_MSG_CAST(s) (s)
-#  define PNGZ_INPUT_CAST(b) (b)
-#endif
 
 /* zlib.h declares a magic type 'uInt' that limits the amount of data that zlib
  * can handle at once.  This type need be no larger than 16 bits (so maximum of
